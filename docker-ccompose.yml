@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=golang # Senha do root
+      - MYSQL_DATABASE=golang     # Nome do banco de dados
+      - MYSQL_USER=golang         # Usuário para o banco de dados
+      - MYSQL_PASSWORD=golang     # Senha do usuário
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+
+volumes:
+  mysql-data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
