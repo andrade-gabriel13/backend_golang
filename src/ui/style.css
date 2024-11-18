@@ -1,0 +1,54 @@
+    /* Navbar no topo */
+.navbar-custom {
+    background-color: #0c6986;
+}
+
+.navbar-custom .navbar-nav .nav-link {
+    color: white;
+}
+
+.navbar-custom .navbar-nav .nav-link:hover {
+    background-color: #0056b3;
+}
+
+/* Estilo do formulário */
+.form-container {
+    margin-top: 80px;
+    max-width: 800px;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Estilo das entradas de texto com borda azul */
+.rounded-input {
+    border-radius: 20px;
+    border: 1px solid #0c6986;
+    padding: 10px;
+}
+
+.btn-custom {
+    border-radius: 20px;
+    background-color: #16a4d0;
+    color: white;
+}
+
+/* Formatação do campo de latitude e longitude */
+.form-group {
+    margin-bottom: 15px;
+}
+
+#map {
+    height: 800px;  /* A altura continua 400px ou outro valor que preferir */
+    width: 100%;    /* A largura do mapa será 100% do seu container */
+}
+.container {
+    max-width: 1100px;
+    margin-top: 100px;
+}
+.map-container {
+    position: relative;
+    margin: 0 auto;
+    border: 2px solid #000000;
+    margin-bottom: 20px;
+}

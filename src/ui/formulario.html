@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro e Visualização de Entregas</title>
+    <!-- Link para o Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+
+</head>
+<body>
+
+         <!-- Navbar com opções no topo -->
+         <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegação">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html">
+                                <i class="bi-house-door"></i> Visualizar Entregas
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="formulario.html">
+                                <i class="bi-pencil-square"></i> Cadastro
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+ 
+
+    <!-- Formulário de cadastro de entregas -->
+    <div id="cadastro" class="form-container">
+        <h2>Cadastro de Entregas</h2>
+        <form>
+            <div class="row">
+                <!-- Primeira Linha de Campos -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Nome</label>
+                        <input type="text" class="form-control rounded-input" id="name" placeholder="Nome do cliente" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="weight" class="form-label">Peso da Entrega(kg)</label>
+                        <input type="number" class="form-control rounded-input" id="weight" placeholder="Peso do cliente" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="address" class="form-label">Endereço</label>
+                        <input type="text" class="form-control rounded-input" id="address" placeholder="Endereço completo" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Segunda Linha de Campos -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="street" class="form-label">Rua</label>
+                        <input type="text" class="form-control rounded-input" id="street" placeholder="Nome da rua" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="number" class="form-label">Número</label>
+                        <input type="number" class="form-control rounded-input" id="number" placeholder="Número da residência" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="neighborhood" class="form-label">Bairro</label>
+                        <input type="text" class="form-control rounded-input" id="neighborhood" placeholder="Bairro" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Terceira Linha de Campos -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="complement" class="form-label">Complemento</label>
+                        <input type="text" class="form-control rounded-input" id="complement" placeholder="Complemento">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="city" class="form-label">Cidade</label>
+                        <input type="text" class="form-control rounded-input" id="city" placeholder="Cidade" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="state" class="form-label">Estado</label>
+                        <input type="text" class="form-control rounded-input" id="state" placeholder="Estado" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Quarta Linha de Campos -->
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="country" class="form-label">País</label>
+                        <input type="text" class="form-control rounded-input" id="country" placeholder="País" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="latitude" class="form-label">Latitude</label>
+                        <input type="number" step="any" class="form-control rounded-input" id="latitude" placeholder="Latitude" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="longitude" class="form-label">Longitude</label>
+                        <input type="number" step="any" class="form-control rounded-input" id="longitude" placeholder="Longitude" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 d-flex justify-content-between">
+                <button type="submit" class="btn btn-custom" onclick="saveClient()">Cadastrar</button>
+                <button type="button" class="btn btn-primary" onclick="searchStreet()">Buscar endereço completo</button>
+            </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="loading" style="display: none;">
+        <i class="fas fa-spinner fa-spin" style="font-size: 24px;"></i> Carregando...
+    </div>
+   
+    <script>
+
+    function searchStreet() {
+    // Pega o valor do campo de endereço
+    const address = document.getElementById("address").value;
+
+    // Verifica se o campo de endereço está vazio
+    if (!address) {
+        alert("Por favor, insira um endereço.");
+        return;
+    }
+
+    document.getElementById("loading").style.display = "block";
+
+    // Faz a requisição para a API com o endereço
+    fetch(`http://localhost:8080/deliveries/geoconding/search?endereco=${encodeURIComponent(address)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro na requisição');
+            }
+            return response.json(); // Decodifica a resposta em JSON
+        })
+        .then(data => {
+            console.log('Dados recebidos da API:', data); // Log dos dados recebidos da API
+
+            // Verifique se há resultados para preencher os campos
+            if (data && data.address) {
+                // Função auxiliar para encontrar o valor de long_name com base no tipo
+                const findByType = (type) => {
+                    return data.address.find(item => item.types && item.types.includes(type))?.long_name || '';
+                };
+                    // Preenchendo os campos do formulário com base no tipo e long_name
+                const setValueIfExists = (id, value) => {
+                    const element = document.getElementById(id);
+                    if (element) {
+                        element.value = value;
+                    }
+                };
+
+                const findByTypeAndIndex = (type, index) => {
+                    return data.address
+                        .filter(item => item.types && item.types.includes(type)) // Filtra os itens pelo tipo
+                        .map((item, idx) => ({ item, idx })) // Cria um mapeamento com o índice
+                        .find(({ idx }) => idx === index)?.item.long_name || ''; // Busca pelo índice específico
+                };
+
+
+                // Preenchendo os campos do formulário com base no tipo e long_name
+                document.getElementById('street').value = findByTypeAndIndex('route', 0); // Rua
+                document.getElementById('number').value = findByType('street_number'); // Número
+                document.getElementById('neighborhood').value = findByTypeAndIndex('route', 1); // Bairro (se aplicável)
+                document.getElementById('complement').value = ''; // Complemento (não presente no JSON)
+                document.getElementById('city').value = findByType('locality'); // Cidade
+                document.getElementById('state').value = findByType('state'); // Estado
+                document.getElementById('country').value = findByType('country'); // País
+                
+                setValueIfExists('latitude', data.latitude); // Latitude
+                setValueIfExists('longitude', data.longitude); // Longitude
+            } else {
+                console.error('Dados de endereço não encontrados.');
+            }
+
+        })
+        .catch(error => {
+            console.error("Erro ao buscar o endereço:", error);
+            alert("Erro ao buscar o endereço.");
+        })
+        .finally(() => {
+        // Esconde o ícone de carregamento após a resposta
+        document.getElementById("loading").style.display = "none";
+    });
+
+        
+        }
+
+    function saveClient() {
+        // Captura os valores de todos os campos do formulário
+        const clientData = {
+            name: document.getElementById("name").value,
+            weight_kg: parseFloat(document.getElementById("weight").value),
+            address: document.getElementById("address").value,
+            street: document.getElementById("street").value,
+            number: parseInt(document.getElementById("number").value),
+            neighborhood: document.getElementById("neighborhood").value,
+            complement: document.getElementById("complement").value,
+            city: document.getElementById("city").value,
+            state: document.getElementById("state").value,
+            country: document.getElementById("country").value,
+            latitude: parseFloat(document.getElementById("latitude").value),
+            longitude: parseFloat(document.getElementById("longitude").value)
+        };
+
+        // Envia os dados do cliente para a API para salvamento no banco de dados
+        fetch("/deliveries", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(clientData) // Converte o objeto para JSON
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error("Erro ao salvar cliente: " + response.status);
+            }
+        })
+        .then(data => {
+            alert("Cliente salvo com sucesso!");
+            // Limpa os campos do formulário após o sucesso
+            document.querySelectorAll(".form-control").forEach(input => input.value = '');
+        })
+        .catch(error => {
+            console.error("Erro ao salvar cliente:", error);
+            alert("Erro ao salvar os dados. Verifique as informações e tente novamente.");
+        });
+    }
+
+    </script>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</body>
+</html>

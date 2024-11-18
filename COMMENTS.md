@@ -1,9 +1,11 @@
-# Challenge para Desenvolvedor Back End - Golang
+# Challenge para Desenvolvedor Back End - Api Golang
 ## Engenheiro Responsável
 ## Gabriel Andrade
-# Projeto de Validação de Campos de Cliente
+# Projeto de Api com Golang, Mysql, Html e Javascript
 
-Este projeto fornece uma série de funcionalidades para validar e processar dados relacionados aos clientes. Ele foi desenvolvido utilizando Go e visa garantir que os dados fornecidos para criação e atualização de clientes sejam válidos e estejam no formato correto antes de serem persistidos no banco de dados.
+Este projeto implementa uma API simples em Go, utilizando o GORM para interação com o banco de dados MySQL. A API permite criar e atualizar clientes, com auto testes configurados para garantir o bom funcionamento, alé das paginas de cadastro de clientes (usuarios com as funcionalidades de buscar os dados do endereço através de api de geocondig para buscar a localização de lat e long, afim de exibir no mapa) e o swagger com as instruções de uso das apis.
+
+![ImagemSistema](./assets/projeto-backend.png)
 
 ## Funcionalidades
 
@@ -84,7 +86,7 @@ Essas funções podem ser reutilizadas de forma flexível em diferentes partes d
 
 ### Dependências
 
-Este projeto foi desenvolvido com a linguagem Go e um container em docker do banco de dados Mysql. Certifique-se de ter o Go instalado em sua máquina.
+Este projeto foi desenvolvido com a linguagem Go e um container em docker do banco de dados Mysql. Certifique-se de ter o Go e o docker instalado em sua máquina.
 
 ## 1. Instalar o Go:  
    Se você ainda não tiver o Go instalado, siga as instruções em [https://golang.org/doc/install](https://golang.org/doc/install).
@@ -157,74 +159,7 @@ Antes de começar a configurar o Docker Compose, você precisa ter o Docker inst
 
 ---
 
-### Passo 2: Instalar o Docker Compose
-
-Docker Compose é uma ferramenta que permite definir e executar aplicativos multi-container com o Docker. É particularmente útil quando seu projeto envolve mais de um container, como no caso do MySQL.
-
-#### Para sistemas **Linux**:
-
-1. Baixe a versão mais recente do Docker Compose:
-   ```bash
-   sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-   ```
-
-2. Torne o Docker Compose executável:
-   ```bash
-   sudo chmod +x /usr/local/bin/docker-compose
-   ```
-
-3. Verifique se o Docker Compose foi instalado corretamente:
-   ```bash
-   docker-compose --version
-   ```
-
-#### Para sistemas **Windows** e **macOS**:
-
-O Docker Compose já está incluído no Docker Desktop para Windows e macOS, então você não precisa instalar separadamente. Basta verificar se o Docker Compose está funcionando com o comando:
-
-```bash
-docker-compose --version
-```
-
----
-
-### Passo 3: Configurar o Docker Compose com MySQL
-
-Agora que você tem o Docker e o Docker Compose instalados, o próximo passo é configurar o serviço do MySQL usando o Docker Compose. O arquivo `docker-compose.yml` vai definir as configurações do container, como a imagem do MySQL, variáveis de ambiente, volumes e rede.
-
-1. **Criar o arquivo `docker-compose.yml`**
-
-Crie o arquivo `docker-compose.yml` na raiz do seu projeto com o seguinte conteúdo:
-
-```yaml
-version: '3.8'
-
-services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql
-    environment:
-      - MYSQL_ROOT_PASSWORD=golang # Senha do root
-      - MYSQL_DATABASE=golang     # Nome do banco de dados
-      - MYSQL_USER=golang         # Usuário para o banco de dados
-      - MYSQL_PASSWORD=golang     # Senha do usuário
-    ports:
-      - "3306:3306"  # Mapeia a porta do MySQL para a porta do host
-    volumes:
-      - mysql-data:/var/lib/mysql  # Persiste dados em um volume local
-    networks:
-      - app-network  # Conecta o serviço à rede do aplicativo
-
-volumes:
-  mysql-data:
-    driver: local  # Definição do volume local para persistência dos dados
-
-networks:
-  app-network:
-    driver: bridge  # Define a rede de comunicação entre os containers
-```
-
-2. **Subir o Docker Compose**
+### Passo 2: Instalar o Docker
 
 Após criar o arquivo `docker-compose.yml`, o próximo passo é subir os containers definidos nele. No terminal, execute o comando:
 
@@ -280,51 +215,68 @@ Com esses passos, você terá configurado o Docker, Docker Compose e o MySQL par
 
 ### Execução do teste em Go
 
-Para testar a validação de dados do cliente, você pode criar uma função de teste que utilize as funções de validação descritas. Exemplo de código para testar a função de validação:
+### 6. Executar os Testes
 
-```go
-package main
+Execute os testes automatizados para garantir que tudo esteja funcionando corretamente:
 
-import (
-	"fmt"
-	"myapi/services"
-	"myapi/models"
-)
-
-func main() {
-	client := models.Client{
-		Name:         "",
-		TestTechnical: "TechnicalTest123",
-		WeightKg:     75,
-		Address:      "123 Main St",
-		Street:       "Main St",
-		Number:       10,
-		Neighborhood: "Downtown",
-		City:         "Metropolis",
-		State:        "StateX",
-		Country:      "CountryY",
-		Latitude:     0,
-		Longitude:    0,
-	}
-
-	// Testando a validação
-	if err := services.ValidateCommonClientFields(client); err != nil {
-		fmt.Println("Erro de validação:", err)
-	} else {
-		fmt.Println("Cliente validado com sucesso")
-	}
-}
+```bash
+go test ./tests -v
 ```
+
+### Estrutura de Testes unitários
+
+Os testes estão localizados na pasta `tests/`, e o arquivo `client_test.go` contém os testes para criação e atualização de clientes. Durante a execução dos testes, o seguinte processo ocorre:
+
+1. **TestCreateClient**: Cria um cliente de teste e verifica se ele foi inserido corretamente.
+2. **TestUpdateClient**: Atualiza o cliente criado e verifica se a atualização foi bem-sucedida.
 
 ### Saída Esperada:
 
-Se os campos não forem preenchidos corretamente, você verá as mensagens de erro no console.
 
-Exemplo de saída:
-
-```txt
-Erro de validação: name is required
 ```
+=== RUN   TestCreateClient
+2024/11/18 02:00:00 INFO Definindo nome da tabela para modelo Client table_name=clients
+Conectado com sucesso ao MySQL!
+2024/11/18 02:00:00 INFO Iniciando o processo de criação de cliente endpoint=CreateClient
+2024/11/18 02:00:00 INFO Corpo da requisição lido com sucesso
+2024/11/18 02:00:00 INFO Client validated successfully field=validation status=success
+2024/11/18 02:00:00 INFO Iniciando o envio de resposta JSON endpoint=respondWithJSON
+2024/11/18 02:00:00 INFO Resposta JSON enviada com sucesso
+2024/11/18 02:00:00 INFO Cliente criado e resposta enviada com sucesso client_name="Teste Cliente"
+--- PASS: TestCreateClient (0.03s)
+=== RUN   TestUpdateClient
+2024/11/18 02:00:00 INFO Definindo nome da tabela para modelo Client table_name=clients
+Conectado com sucesso ao MySQL!
+Cliente criado: {{331 2024-11-18 02:00:00.484 -0300 -03 2024-11-18 02:00:00.484 -0300 -03 <nil>} Cliente Teste 70 Rua Teste, 123  0 0 0}
+2024/11/18 02:00:00 Cliente atualizado: {{331 2024-11-18 02:00:00.484 -0300 -03 2024-11-18 02:00:00.484 -0300 -03 <nil>} Cliente Atualizado 75 Rua Teste Atualizada, 456 0 0 0}
+--- PASS: TestUpdateClient (0.05s)
+```
+
+### Pagina de cadastro com a busca de lat e long por meio de endereço completo
+
+Nessa pagina podemos inserir o usuario temos a funcionalidade que usa uma api externa para retornar com esses dados e após inserir, também existe a pagina com o mapa embutido onde é possivel filtrar o endereço pelo id ou cidade nos campos inferiores, ao clicar os campos são limpos automaticamente.
+
+![ImagemSistema](./assets/cadastro.png)
+
+Mapa com as buscas e os dados exibidos por pin 
+
+![ImagemSistema](./assets/mapa.png)
+
+### Swagger
+
+Nesse projeto também foi possivel a confecção do swagger com a explicação de cada rota e seus testes de uso na pratica, facilitando assim os clientes de backend para a sua utilização.
+
+
+![ImagemSistema](./assets/swagger.png)
+
+
+### Requisitos obrigatórios que não foram entregues.
+
+Para esse projeto foi necessário o uso de uma api de geolocalização tanto para a comum onde inserimos o endereço completo e retornamos com o lat e long e outras partes como estado, pais e outros, não utilizei o Google Maps geoconding por conta de não mais ter mais créditos no GCP nos meus emails de utlização, 
+
+Tentei buscar outras similares como [https://locationiq.com/](https://locationiq.com/) mas sem sucesso por conta de não retornar um ponto preciso para tal uso, sendo assim seguindo com a [https://distancematrix.ai/pt](https://distancematrix.ai/pt) que entrega com mais precisão proxima do google maps.
+
+Sendo assim não foi possivel entregar apenas a função de Geoconding Reverse, mas tenho entendimento de como ser feito.
 
 ## Contribuição
 
@@ -334,7 +286,3 @@ Se você deseja contribuir com o projeto, fique à vontade para enviar pull requ
 2. Crie uma nova branch para a sua funcionalidade.
 3. Faça as alterações necessárias.
 4. Envie um pull request com uma descrição clara das mudanças.
-
-## Licença
-
-Este projeto está licenciado sob a [MIT License](LICENSE).

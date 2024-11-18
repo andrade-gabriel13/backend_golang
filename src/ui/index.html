@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Cliente</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+    
+</head>
+<body class="bg-light">
+    <div class="container">
+        <h2 class="text-center mb-4">Visualização de Entregas</h2>        
+    <div  id="visualizar" class="map-container">
+        <div id="map"></div>
+    </div>
+        <!-- Navbar com opções no topo -->
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegação">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">
+                            <i class="bi-house-door"></i> Visualizar Entregas
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="formulario.html">
+                            <i class="bi-pencil-square"></i> Cadastro
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="col-12 d-flex justify-content-between">
+        <input type="number" id="clientId" class="form-control" placeholder="Digite o ID do cliente" min="1" style="width: 200px;">
+        <input type="text" id="city" class="form-control" placeholder="Digite a cidade" min="1" style="width: 200px;">
+        <button type="submit" class="btn btn-custom" onclick="searchClient()">Busca endereço por id</button>
+        <button type="button" class="btn btn-secondary" onclick="listAllAddresses()">Listar todos os endereços</button>
+        <button type="button" class="btn btn-primary" onclick="clearMap()">Limpar mapa</button>
+    </div>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // Inicializando o mapa
+        let map = L.map('map').setView([-22.9519, -43.2105], 13); // Posição inicial (Cristo Redentor, Rio de Janeiro)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+    
+        let markers = []; // Array para armazenar os marcadores adicionados
+    
+        // Criar um ícone personalizado (pino vermelho)
+        const redIcon = L.icon({
+            iconUrl: './pin.png', // Novo link para o pino vermelho
+            iconSize: [41, 41],  // Tamanho do ícone
+            iconAnchor: [12, 41], // Posição do âncor da imagem no marcador
+            popupAnchor: [1, -34], // Posição do popup em relação ao marcador
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png', // Sombra do ícone
+            shadowSize: [41, 41] // Tamanho da sombra
+        });
+
+    
+        // Função para listar todos os endereços
+        function listAllAddresses() {
+            fetch('http://localhost:8080/deliveries?limit=100&offset=0')
+            .then(response => response.json())
+            .then(data => {
+                const clients = data.clients;
+                const bounds = L.latLngBounds(); // Inicializando os limites do mapa
+
+                clients.forEach(client => {
+                    const lat = client.latitude;
+                    const lon = client.longitude;
+
+                    // Cria um novo marcador
+                    const marker = L.marker([lat, lon], { icon: redIcon }).addTo(map)
+                        .bindPopup(`
+                            <b>${client.name}</b><br>
+                            ${client.address}<br>
+                            ${client.city} - ${client.state}, ${client.country}<br>
+                            <a href="mailto:${client.email || ''}">Enviar email</a>
+                        `);
+
+                    markers.push(marker); // Adiciona o marcador ao array
+
+                    // Atualiza os limites do mapa com a posição do marcador
+                    bounds.extend([lat, lon]);
+                });
+
+                // Ajusta a visão do mapa para encaixar todos os marcadores
+                map.fitBounds(bounds);
+            })
+            .catch(error => console.error('Erro ao buscar endereços:', error));
+        }
+    
+        // Função para limpar o mapa (remover marcadores)
+        function clearMap() {
+            markers.forEach(marker => {
+                map.removeLayer(marker); // Remove cada marcador
+            });
+            markers = []; // Limpa o array de marcadores
+        }
+    
+        // Função para buscar um endereço específico (a ser implementada)
+        function searchClient() {
+            const clientId = document.getElementById('clientId').value;
+            const city = document.getElementById('city').value;  // Obtém o valor do input
+            if (!clientId && !city) {
+                    alert('Por favor, insira um ID de cliente ou cidade para a busca');
+                    return;
+                }
+    
+    
+                fetch(`http://localhost:8080/deliveries?id=${clientId}&limit=100&offset=0&city=${city}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Verifica se o cliente foi encontrado
+                        if (data && data.client) {
+                            const client = data.client;
+                            const lat = client.latitude;
+                            const lon = client.longitude;
+
+                            // Cria um novo marcador para o cliente
+                            const marker = L.marker([lat, lon], { icon: redIcon }).addTo(map)
+                                .bindPopup(`
+                                    <b>${client.name}</b><br>
+                                    ${client.address}<br>
+                                    ${client.city} - ${client.state}, ${client.country}<br>
+                                    <a href="mailto:${client.email || ''}">Enviar email</a>
+                                `);
+
+                            markers.push(marker); // Adiciona o marcador ao array
+
+                            // Ajusta a visão do mapa para mostrar o marcador
+                            map.setView([lat, lon], 13); // Enquadra o mapa para o cliente
+                        } 
+                            // Se a busca for por cidade, a resposta tem a chave 'clients' com um array de múltiplos clientes
+                        else if (city && data && data.clients && data.clients.length > 0) {
+                            // Itera sobre os clientes encontrados e cria marcadores
+                            data.clients.forEach(client => {
+                                const lat = client.latitude;
+                                const lon = client.longitude;
+
+                                // Cria um novo marcador para o cliente
+                                const marker = L.marker([lat, lon], { icon: redIcon }).addTo(map)
+                                    .bindPopup(`
+                                        <b>${client.name}</b><br>
+                                        ${client.address}<br>
+                                        ${client.city} - ${client.state}, ${client.country}<br>
+                                        <a href="mailto:${client.email || ''}">Enviar email</a>
+                                    `);
+
+                                markers.push(marker); // Adiciona o marcador ao array
+                            });
+
+                            // Ajusta a visão do mapa para mostrar todos os marcadores
+                            map.fitBounds(markers.map(marker => marker.getLatLng()));
+                        } else {
+                            alert('Cliente não encontrado');
+                        }
+                           // Limpar os campos de entrada (clientId e city) após a busca
+                            document.getElementById('clientId').value = '';  // Limpar o campo de ID
+                            document.getElementById('city').value = '';  // Limpar o campo de cidade
+    
+                          })
+                        .catch(error => console.error('Erro ao buscar cliente:', error));
+            }
+
+    </script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
