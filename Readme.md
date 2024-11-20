@@ -272,9 +272,9 @@ Nesse projeto também foi possivel a confecção do swagger com a explicação d
 
 ### Requisitos obrigatórios que não foram entregues.
 
-Para esse projeto foi necessário o uso de uma api de geolocalização tanto para a comum onde inserimos o endereço completo e retornamos com o lat e long e outras partes como estado, pais e outros, não utilizei o Google Maps geoconding por conta de não mais ter mais créditos no GCP nos meus emails de utlização, 
+Para esse projeto foi necessário o uso de uma api de geolocalização onde inserimos o endereço completo e retornamos com o lat e long e outras partes como estado, pais e outros, não utilizei o Google Maps geoconding por conta de não mais ter mais créditos no GCP nos meus emails de utlização, 
 
-Tentei buscar outras similares como [https://locationiq.com/](https://locationiq.com/) mas sem sucesso por conta de não retornar um ponto preciso para tal uso, sendo assim seguindo com a [https://distancematrix.ai/pt](https://distancematrix.ai/pt) que entrega com mais precisão proxima do google maps.
+Tentei buscar outras similares como [https://locationiq.com/](https://locationiq.com/) mas sem sucesso por conta de não retornar um ponto preciso para tal uso, sendo assim seguindo com a [https://distancematrix.ai/pt](https://distancematrix.ai/pt) que entrega com mais precisão proxima do google maps para a funcionalidade de retorno com os referidos dados sem o modelo de reverse.
 
 Sendo assim não foi possivel entregar apenas a função de Geoconding Reverse, mas tenho entendimento de como ser feito.
 
