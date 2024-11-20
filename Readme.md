@@ -159,7 +159,7 @@ Antes de começar a configurar o Docker Compose, você precisa ter o Docker inst
 
 ---
 
-### Passo 2: Instalar o Docker
+### Passo 2: Instalar os containers em docker
 
 Após criar o arquivo `docker-compose.yml`, o próximo passo é subir os containers definidos nele. No terminal, execute o comando:
 
