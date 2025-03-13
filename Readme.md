@@ -3,7 +3,7 @@
 ## Gabriel Andrade
 # Projeto de Api com Golang, Mysql, Html e Javascript
 
-Este projeto implementa uma API simples em Go, utilizando o GORM para interação com o banco de dados MySQL. A API permite criar e atualizar clientes, com auto testes configurados para garantir o bom funcionamento, alé das paginas de cadastro de clientes (usuarios com as funcionalidades de buscar os dados do endereço através de api de geocondig para buscar a localização de lat e long, afim de exibir no mapa) e o swagger com as instruções de uso das apis.
+Este projeto implementa uma API simples em Go, utilizando o GORM para interação com o banco de dados MySQL. A API permite criar e atualizar clientes, com auto testes configurados para garantir o bom funcionamento, além das paginas de cadastro de clientes (usuarios com as funcionalidades de buscar os dados do endereço através de api de geocondig para buscar a localização de lat e long, afim de exibir no mapa) e o swagger com as instruções de uso das apis.
 
 ![ImagemSistema](./assets/projeto-backend.png)
 
